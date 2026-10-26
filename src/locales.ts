@@ -281,19 +281,7 @@ export const translations = {
         // Settings - Footer
         reset_defaults: "恢复初始设置",
         reset_confirm: "确定要恢复初始设置吗？这会清除所有自定义快捷键和打开程序设置。",
-        check_update: "检查更新",
         checking: "检查中...",
-        up_to_date: "已是最新版本",
-        checking_failed: "检查失败",
-        downloading: "正在下载...",
-        download_failed: "下载失败",
-        download_failed_with_error: "下载失败: {e}",
-        new_version_found: "发现新版本",
-        update_available: "发现新版本",
-        no_release_notes: "暂无更新说明",
-        update_now: "立即更新",
-        later: "稍后再说",
-        install_now: "立即安装",
 
         // Empty State
         no_records: "未找到相关记录",
@@ -768,19 +756,7 @@ export const translations = {
         // Settings - Footer
         reset_defaults: "Reset to Defaults",
         reset_confirm: "Are you sure? This will clear all custom hotkeys and app settings.",
-        check_update: "Check for Updates",
         checking: "Checking...",
-        up_to_date: "Up to date",
-        checking_failed: "Check failed",
-        downloading: "Downloading in background...",
-        download_failed: "Download failed",
-        download_failed_with_error: "Download failed: {e}",
-        new_version_found: "New Version Found",
-        update_available: "Update Available",
-        no_release_notes: "No release notes",
-        update_now: "Update Now",
-        later: "Later",
-        install_now: "Install Now",
 
         // Empty State
         no_records: "No records found",
@@ -1235,19 +1211,7 @@ export const translations = {
         // Settings - Footer
         reset_defaults: "恢復初始設定",
         reset_confirm: "確定要恢復初始設定嗎？這會清除所有自定義快速鍵和開啟程式設定。",
-        check_update: "檢查更新",
         checking: "檢查中...",
-        up_to_date: "已是最新版本",
-        checking_failed: "檢查失敗",
-        downloading: "由於資源較大，正在後台靜默下載，下載完成後將自動安裝並重啟...",
-        download_failed: "下載失敗",
-        download_failed_with_error: "下載失敗: {e}",
-        new_version_found: "發現新版本",
-        update_available: "發現新版本",
-        no_release_notes: "暫無更新說明",
-        update_now: "立即更新",
-        later: "稍後再說",
-        install_now: "立即安裝",
 
         // Empty State
         no_records: "未找到相關紀錄",

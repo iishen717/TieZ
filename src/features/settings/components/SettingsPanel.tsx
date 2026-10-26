@@ -310,7 +310,6 @@ const SettingsPanel = (props: SettingsPanelProps) => {
     const [cloudSyncNowRunning, setCloudSyncNowRunning] = useState(false);
     const [editingProfile, setEditingProfile] = useState<EditableAiProfile | null>(null);
     const [profileStatuses, setProfileStatuses] = useState<AiProfileStatusMap>({});
-    const [updateStatus, setUpdateStatus] = useState<string>("");
     const [openHints, setOpenHints] = useState<Set<string>>(new Set());
     const [privacyKindsOpen, setPrivacyKindsOpen] = useState(false);
     const [privacyRulesOpen, setPrivacyRulesOpen] = useState(false);
@@ -793,9 +792,6 @@ const SettingsPanel = (props: SettingsPanelProps) => {
             <SettingsFooter
                 t={t}
                 appVersion={appVersion}
-                updateStatus={updateStatus}
-                setUpdateStatus={setUpdateStatus}
-                
                 onResetSettings={handleResetSettings}
                 emailCopied={emailCopied}
                 setEmailCopied={setEmailCopied}

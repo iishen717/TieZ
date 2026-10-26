@@ -1360,52 +1360,6 @@ body.theme-acrylic .settings-view select.search-input option {
   box-shadow: var(--segment-active-shadow);
 }
 
-/* Update Modal Button */
-.update-install-btn {
-  background: linear-gradient(135deg, var(--accent-color) 0%, var(--accent-hover) 100%) !important;
-  color: #fff !important;
-  border: none !important;
-  box-shadow: 0 4px 15px rgba(var(--accent-color-rgb), 0.35) !important;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
-  position: relative;
-  overflow: hidden;
-}
-
-.update-install-btn:hover {
-  transform: translateY(-1px) scale(1.02);
-  box-shadow: 0 6px 20px rgba(var(--accent-color-rgb), 0.45) !important;
-  filter: brightness(1.1);
-}
-
-.update-install-btn:active {
-  transform: translateY(0) scale(0.98);
-  box-shadow: 0 2px 10px rgba(var(--accent-color-rgb), 0.3) !important;
-}
-
-.update-install-btn::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.15) 0%, transparent 100%);
-  pointer-events: none;
-}
-
-.update-modal-cancel-btn {
-  background: var(--bg-element) !important;
-  border: 1px solid var(--line-soft) !important;
-  color: var(--text-secondary) !important;
-  transition: all 0.2s ease !important;
-}
-
-.update-modal-cancel-btn:hover {
-  background: var(--bg-button) !important;
-  color: var(--text-primary) !important;
-  border-color: var(--line-strong) !important;
-}
-
 /* Local Network / File Transfer Panel Styles */
 .file-transfer-panel {
     display: flex;

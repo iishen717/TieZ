@@ -122,9 +122,7 @@
                 }
               ]
             },
-            "window-state:default",
-            "updater:default",
-            "process:allow-restart"
+            "window-state:default"
           ]
         }
       ]
@@ -132,7 +130,6 @@
   },
   "bundle": {
     "active": true,
-    "createUpdaterArtifacts": true,
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",
@@ -157,14 +154,6 @@
         "displayLanguageSelector": true,
         "startMenuFolder": "TieZ"
       }
-    }
-  },
-  "plugins": {
-    "updater": {
-      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDY5QjdEQTdCMjgxMEVEMkMKUldRczdSQW9lOXEzYWNDQm1DR3Y3Y2NlZjhFZ2hjRzcyejRuZ25rYUVJZm1sQ1FQM1hIWXdIMkQK",
-      "endpoints": [
-        "https://tiez.name666.top/api/v1/latest-version?version={{current_version}}"
-      ]
     }
   }
 }
