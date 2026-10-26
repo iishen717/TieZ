@@ -131,7 +131,7 @@ const SettingsFooter = ({
                         {t('official_website')}
                     </button>
                     <button
-                        onClick={() => openUrl('https://github.com/jimuzhe/tiez-clipboard')}
+                        onClick={() => openUrl('https://github.com/iishen717/TieZ')}
                         style={{
                             fontSize: '11px',
                             color: 'var(--accent-color)',
