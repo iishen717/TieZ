@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import { invoke } from "@tauri-apps/api/core";
-import type { MutableRefObject } from "react";
 import type { AiProfile, AppCleanupPolicy } from "../../features/settings/types";
 import type { QuickPasteModifier } from "../../features/app/types";
 
@@ -22,7 +21,6 @@ const normalizeQuickPasteModifier = (value: string | undefined): QuickPasteModif
 
 interface UseSettingsPostInitOptions {
   settings: Record<string, string> | null;
-  tagManagerSizeRef: MutableRefObject<{ width: number; height: number } | null>;
   setCustomBackground: (val: string) => void;
   setCustomBackgroundOpacity: (val: number) => void;
   setSurfaceOpacity: (val: number) => void;
@@ -96,16 +94,14 @@ interface UseSettingsPostInitOptions {
   setAiAssignedProfileTranslate: (val: string) => void;
   setSettingsLoaded: (val: boolean) => void;
   setClipboardItemFontSize: (val: number) => void;
-  setClipboardTagFontSize: (val: number) => void;
   setEmojiPanelEnabled: (val: boolean) => void;
-  setTagManagerEnabled: (val: boolean) => void;
+  setMemoManagerEnabled: (val: boolean) => void;
   setEmojiPanelTab: (val: "emoji" | "favorites") => void;
   setEmojiFavorites: (val: string[]) => void;
 }
 
 export const useSettingsPostInit = ({
   settings,
-  tagManagerSizeRef,
   setCustomBackground,
   setCustomBackgroundOpacity,
   setSurfaceOpacity,
@@ -179,25 +175,13 @@ export const useSettingsPostInit = ({
   setAiAssignedProfileTranslate,
   setSettingsLoaded,
   setClipboardItemFontSize,
-  setClipboardTagFontSize,
   setEmojiPanelEnabled,
-  setTagManagerEnabled,
+  setMemoManagerEnabled,
   setEmojiPanelTab,
   setEmojiFavorites
 }: UseSettingsPostInitOptions) => {
   useEffect(() => {
     if (!settings) return;
-
-    if (settings["app.tag_manager_size"]) {
-      try {
-        const parsed = JSON.parse(settings["app.tag_manager_size"]);
-        if (parsed && typeof parsed.width === "number" && typeof parsed.height === "number") {
-          tagManagerSizeRef.current = { width: parsed.width, height: parsed.height };
-        }
-      } catch (e) {
-        console.warn("Invalid tag manager size:", e);
-      }
-    }
 
     // Theme application is centralized in the theme effect below
     if (settings["app.custom_background"]) setCustomBackground(settings["app.custom_background"]);
@@ -214,15 +198,11 @@ export const useSettingsPostInit = ({
       const next = parseInt(settings["app.clipboard_item_font_size"]);
       if (Number.isFinite(next)) setClipboardItemFontSize(next);
     }
-    if (settings["app.clipboard_tag_font_size"]) {
-      const next = parseInt(settings["app.clipboard_tag_font_size"]);
-      if (Number.isFinite(next)) setClipboardTagFontSize(next);
-    }
     if (settings["app.emoji_panel_enabled"] !== undefined) {
       setEmojiPanelEnabled(settings["app.emoji_panel_enabled"] === "true");
     }
     if (settings["app.tag_manager_enabled"] !== undefined) {
-      setTagManagerEnabled(settings["app.tag_manager_enabled"] !== "false");
+      setMemoManagerEnabled(settings["app.tag_manager_enabled"] !== "false");
     }
     if (settings["app.emoji_panel_tab"] === "favorites" || settings["app.emoji_panel_tab"] === "emoji") {
       setEmojiPanelTab(settings["app.emoji_panel_tab"] as "emoji" | "favorites");
@@ -448,7 +428,6 @@ export const useSettingsPostInit = ({
     setSettingsLoaded(true);
   }, [
     settings,
-    tagManagerSizeRef,
     setCustomBackground,
     setCustomBackgroundOpacity,
     setSurfaceOpacity,
@@ -521,9 +500,8 @@ export const useSettingsPostInit = ({
     setAiAssignedProfileTranslate,
     setSettingsLoaded,
     setClipboardItemFontSize,
-    setClipboardTagFontSize,
     setEmojiPanelEnabled,
-    setTagManagerEnabled,
+    setMemoManagerEnabled,
     setEmojiPanelTab,
     setEmojiFavorites
   ]);

@@ -35,8 +35,6 @@ interface AppearanceSettingsGroupProps {
     setCompactMode: (val: boolean) => void;
     clipboardItemFontSize: number;
     setClipboardItemFontSize: (val: number) => void;
-    clipboardTagFontSize: number;
-    setClipboardTagFontSize: (val: number) => void;
     customBackground: string;
     setCustomBackground: (val: string) => void;
     customBackgroundOpacity: number;
@@ -79,8 +77,6 @@ const AppearanceSettingsGroup = ({
     setCompactMode,
     clipboardItemFontSize,
     setClipboardItemFontSize,
-    clipboardTagFontSize,
-    setClipboardTagFontSize,
     customBackground,
     setCustomBackground,
     customBackgroundOpacity,
@@ -257,32 +253,6 @@ const AppearanceSettingsGroup = ({
                             saveAppSetting('clipboard_item_font_size', String(val));
                         }}
                         style={buildRangeStyle(clipboardItemFontSize, 11, 18)}
-                    />
-                </div>
-
-                <div className="setting-item column">
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
-                        <LabelWithHint
-                            label={t('clipboard_tag_font_size') || '标签字体大小'}
-                            hint={t('clipboard_tag_font_size_hint') || '调整剪贴板条目标签的字体大小'}
-                            hintKey="clipboard_tag_font_size"
-                        />
-                        <span className="hint" style={{ fontSize: '10px', color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>
-                            {clipboardTagFontSize}px
-                        </span>
-                    </div>
-                    <input
-                        type="range"
-                        min="8"
-                        max="14"
-                        step="1"
-                        value={clipboardTagFontSize}
-                        onChange={(e) => {
-                            const val = parseInt(e.target.value);
-                            setClipboardTagFontSize(val);
-                            saveAppSetting('clipboard_tag_font_size', String(val));
-                        }}
-                        style={buildRangeStyle(clipboardTagFontSize, 8, 14)}
                     />
                 </div>
 

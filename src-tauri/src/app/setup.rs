@@ -13,6 +13,7 @@ use crate::infrastructure::repository::clipboard_repo::SqliteClipboardRepository
 use crate::infrastructure::repository::settings_repo::{
     SettingsRepository, SqliteSettingsRepository,
 };
+use crate::infrastructure::repository::memo_repo::SqliteMemoRepository;
 use crate::infrastructure::repository::tag_repo::SqliteTagRepository;
 use crate::infrastructure::windows_ext::WindowExt;
 use crate::services::encryption_queue::init_encryption_queue;
@@ -345,11 +346,13 @@ fn setup_state(
     let repo = SqliteClipboardRepository::new(conn_arc.clone());
     let settings_repo = SqliteSettingsRepository::new(conn_arc.clone());
     let tag_repo = SqliteTagRepository::new(conn_arc.clone());
+    let memo_repo = SqliteMemoRepository::new(conn_arc.clone());
     app.manage(DbState {
         conn: conn_arc,
         repo,
         settings_repo,
         tag_repo,
+        memo_repo,
     });
 
     app.manage(SettingsState {

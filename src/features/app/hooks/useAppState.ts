@@ -9,8 +9,8 @@ const DEFAULT_AI_KEY = import.meta.env.VITE_AI_DEFAULT_API_KEY ?? "";
 export const useAppState = (): AppState => {
   const [showSettings, setShowSettings] = useState(false);
   const [settingsSubpage, setSettingsSubpage] = useState<"home" | "advanced">("home");
-  const [showTagManager, setShowTagManager] = useState(false);
-  const [tagManagerEnabled, setTagManagerEnabled] = useState(true);
+  const [showMemoManager, setShowMemoManager] = useState(false);
+  const [memoManagerEnabled, setMemoManagerEnabled] = useState(true);
   const [collapsedGroups, setCollapsedGroups] = useState<Record<string, boolean>>({
     general: true,
     clipboard: true,
@@ -27,12 +27,9 @@ export const useAppState = (): AppState => {
   const [search, setSearch] = useState("");
   const [isComposing, setIsComposing] = useState(false);
   const [searchIsFocused, setSearchIsFocused] = useState(false);
-  const [showTagFilter, setShowTagFilter] = useState(false);
-  const [tagInput, setTagInput] = useState("");
   const [showEmojiPanel, setShowEmojiPanel] = useState(false);
   const [emojiFavorites, setEmojiFavorites] = useState<string[]>([]);
   const [aiOptionsOpenId, setAiOptionsOpenId] = useState<number | null>(null);
-  const [editingTagsId, setEditingTagsId] = useState<number | null>(null);
   const [revealedIds, setRevealedIds] = useState<Set<number>>(new Set());
   const [autoStart, setAutoStart] = useState(true);
   const [deduplicate, setDeduplicate] = useState(true);
@@ -80,7 +77,6 @@ export const useAppState = (): AppState => {
   const [showSourceAppIcon, setShowSourceAppIcon] = useState(true);
   const [compactMode, setCompactMode] = useState(false);
   const [clipboardItemFontSize, setClipboardItemFontSize] = useState(13);
-  const [clipboardTagFontSize, setClipboardTagFontSize] = useState(10);
   const [emojiPanelEnabled, setEmojiPanelEnabled] = useState(false);
   const [emojiPanelTab, setEmojiPanelTab] = useState<"emoji" | "favorites">("emoji");
   const [showHotkeyHint, setShowHotkeyHint] = useState(false);
@@ -174,10 +170,10 @@ export const useAppState = (): AppState => {
     setShowSettings,
     settingsSubpage,
     setSettingsSubpage,
-    showTagManager,
-    setShowTagManager,
-    tagManagerEnabled,
-    setTagManagerEnabled,
+    showMemoManager,
+    setShowMemoManager,
+    memoManagerEnabled,
+    setMemoManagerEnabled,
     collapsedGroups,
     setCollapsedGroups,
     history,
@@ -188,18 +184,12 @@ export const useAppState = (): AppState => {
     setIsComposing,
     searchIsFocused,
     setSearchIsFocused,
-    showTagFilter,
-    setShowTagFilter,
-    tagInput,
-    setTagInput,
     showEmojiPanel,
     setShowEmojiPanel,
     emojiFavorites,
     setEmojiFavorites,
     aiOptionsOpenId,
     setAiOptionsOpenId,
-    editingTagsId,
-    setEditingTagsId,
     revealedIds,
     setRevealedIds,
     autoStart,
@@ -284,8 +274,6 @@ export const useAppState = (): AppState => {
     setCompactMode,
     clipboardItemFontSize,
     setClipboardItemFontSize,
-    clipboardTagFontSize,
-    setClipboardTagFontSize,
     emojiPanelEnabled,
     setEmojiPanelEnabled,
     emojiPanelTab,

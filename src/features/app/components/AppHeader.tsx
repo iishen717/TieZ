@@ -13,15 +13,14 @@ import {
   X
 } from "lucide-react";
 import { invoke } from "@tauri-apps/api/core";
-import { getTagColor, getTagTextColor } from "../../../shared/lib/utils";
 
 interface AppHeaderProps {
   t: (key: string) => string;
   showSettings: boolean;
   setShowSettings: (val: boolean) => void;
-  showTagManager: boolean;
-  setShowTagManager: (val: boolean) => void;
-  tagManagerEnabled: boolean;
+  showMemoManager: boolean;
+  setShowMemoManager: (val: boolean) => void;
+  memoManagerEnabled: boolean;
   showEmojiPanel: boolean;
   setShowEmojiPanel: (val: boolean) => void;
   emojiPanelEnabled: boolean;
@@ -35,13 +34,7 @@ interface AppHeaderProps {
   setSearch: (val: string) => void;
   setIsComposing: (val: boolean) => void;
   searchInputRef: RefObject<HTMLInputElement | null>;
-  showTagFilter: boolean;
-  setShowTagFilter: (val: boolean) => void;
-  allTags: string[];
-  searchIsFocused: boolean;
   setSearchIsFocused: (val: boolean) => void;
-  setEditingTagsId: (val: number | null) => void;
-  theme: string;
   colorMode: string;
   settingsTitle: string;
   typeFilter: string | null;
@@ -54,9 +47,9 @@ const AppHeader = ({
   t,
   showSettings,
   setShowSettings,
-  showTagManager,
-  setShowTagManager,
-  tagManagerEnabled,
+  showMemoManager,
+  setShowMemoManager,
+  memoManagerEnabled,
   showEmojiPanel,
   setShowEmojiPanel,
   emojiPanelEnabled,
@@ -70,13 +63,7 @@ const AppHeader = ({
   setSearch,
   setIsComposing,
   searchInputRef,
-  showTagFilter,
-  setShowTagFilter,
-  allTags,
-  searchIsFocused,
   setSearchIsFocused,
-  setEditingTagsId,
-  theme,
   colorMode,
   settingsTitle,
   typeFilter,
@@ -101,7 +88,7 @@ const AppHeader = ({
   <header className="window-drag-region">
     <div className="header-top">
       <div className="header-leading">
-        {(showSettings || showTagManager || showEmojiPanel) && (
+        {(showSettings || showMemoManager || showEmojiPanel) && (
           <button className="btn-icon window-no-drag" onClick={onBack}>
             <ChevronLeft size={18} />
           </button>
@@ -110,8 +97,8 @@ const AppHeader = ({
           <span className="header-title">
             {showEmojiPanel
               ? (t('emoji_panel') || '表情包')
-              : showTagManager && tagManagerEnabled
-                ? (t('tag_manager') || '标签管理')
+              : showMemoManager && memoManagerEnabled
+                ? (t('memo_manager') || '备忘录')
                 : showSettings
                   ? settingsTitle
                   : t('app_name')}
@@ -132,13 +119,13 @@ const AppHeader = ({
           {isWindowPinned ? <PinOff size={16} /> : <Pin size={16} />}
         </button>
 
-        {!showSettings && !showTagManager && !showEmojiPanel && (
+        {!showSettings && !showMemoManager && !showEmojiPanel && (
           <>
             <button className="btn-icon" title={t('clear_history')} onClick={clearHistory}>
               <Trash2 size={16} />
             </button>
-            {tagManagerEnabled && (
-              <button className="btn-icon" title={t('tag_manager') || '标签管理'} onClick={() => setShowTagManager(true)}>
+            {memoManagerEnabled && (
+              <button className="btn-icon" title={t('memo_manager') || '备忘录'} onClick={() => setShowMemoManager(true)}>
                 <Tag size={16} />
               </button>
             )}
@@ -169,7 +156,7 @@ const AppHeader = ({
       </div>
     </div>
 
-    {!showSettings && !showTagManager && !showEmojiPanel && (
+    {!showSettings && !showMemoManager && !showEmojiPanel && (
       <AnimatePresence>
         {(showSearchBox || search.trim().length > 0) && (
           <motion.div
@@ -189,7 +176,7 @@ const AppHeader = ({
                 <input
                   ref={searchInputRef}
                   type="text"
-                  className={`search-input ${showTagFilter && allTags.length > 0 ? 'dropdown-open' : ''}`}
+                  className="search-input"
                   placeholder={t('search_placeholder')}
                   value={search}
                   onCompositionStart={() => setIsComposing(true)}
@@ -203,46 +190,15 @@ const AppHeader = ({
                   onMouseDown={() => {
                     invoke("activate_window_focus").catch(console.error);
                   }}
-                  onClick={() => { setShowTagFilter(true); setEditingTagsId(null); }}
                   onFocus={() => {
                     invoke("activate_window_focus").catch(console.error);
-                    setShowTagFilter(true);
                     setSearchIsFocused(true);
-                    setEditingTagsId(null);
                   }}
                   onBlur={() => {
-                    setTimeout(() => {
-                      setShowTagFilter(false);
-                      setSearchIsFocused(false);
-                    }, 200);
+                    setSearchIsFocused(false);
                   }}
                   style={{ color: colorMode === 'dark' ? '#ffffff' : undefined }}
                 />
-                {showTagFilter && searchIsFocused && allTags.length > 0 && (
-                  <div className="tags-dropdown">
-                    <div className="tags-label">{t('tags') || "Tags"}</div>
-                    <div className="tags-list">
-                      {allTags.map(tag => {
-                        const tagBackground = getTagColor(tag, theme);
-                        return (
-                          <span
-                            className="tag-chip"
-                            key={tag}
-                            onMouseDown={(e) => {
-                              e.preventDefault();
-                              setSearch("tag:" + tag);
-                              setShowTagFilter(false);
-                            }}
-                            data-tag={tag}
-                            style={{ background: tagBackground, color: getTagTextColor(tagBackground) }}
-                          >
-                            {tag}
-                          </span>
-                        );
-                      })}
-                    </div>
-                  </div>
-                )}
               </div>
               <div
                 className="hide-scrollbar"

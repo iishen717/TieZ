@@ -1,4 +1,4 @@
-import { useCallback, useRef } from "react";
+import { useCallback } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { translations } from "../../../locales";
 import AdvancedSettingsGroup from "./groups/AdvancedSettingsGroup";
@@ -90,10 +90,8 @@ const AdvancedSettingsWindow = () => {
         settingsLoaded,
         clipboardItemFontSize,
         setClipboardItemFontSize,
-        clipboardTagFontSize,
-        setClipboardTagFontSize,
         setEmojiPanelEnabled,
-        setTagManagerEnabled,
+        setMemoManagerEnabled,
         setEmojiPanelTab,
         setEmojiFavorites,
         setAutoStart,
@@ -122,8 +120,6 @@ const AdvancedSettingsWindow = () => {
         setFileTransferPath
     } = appState;
 
-    const tagManagerSizeRef = useRef<{ width: number; height: number } | null>(null);
-
     const t = useCallback((key: string) => {
         const k = key as keyof typeof translations["zh"];
         return translations[language][k] || translations["en"][k] || key;
@@ -140,7 +136,6 @@ const AdvancedSettingsWindow = () => {
 
     useSettingsPostInit({
         settings,
-        tagManagerSizeRef,
         setCustomBackground,
         setCustomBackgroundOpacity,
         setSurfaceOpacity,
@@ -214,9 +209,8 @@ const AdvancedSettingsWindow = () => {
         setAiAssignedProfileTranslate,
         setSettingsLoaded,
         setClipboardItemFontSize,
-        setClipboardTagFontSize,
         setEmojiPanelEnabled,
-        setTagManagerEnabled,
+        setMemoManagerEnabled,
         setEmojiPanelTab,
         setEmojiFavorites
     });
@@ -247,7 +241,6 @@ const AdvancedSettingsWindow = () => {
         compactMode,
         settingsLoaded,
         clipboardItemFontSize,
-        clipboardTagFontSize,
         surfaceOpacity
     });
 

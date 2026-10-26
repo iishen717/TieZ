@@ -34,7 +34,6 @@ type PreviewPayload = {
     colorMode?: "light" | "dark";
     richTextSnapshotPreview?: boolean;
     clipboardItemFontSize?: number;
-    clipboardTagFontSize?: number;
 };
 
 const RICH_IMAGE_FALLBACK_PREFIX = "<!--TIEZ_RICH_IMAGE:";
@@ -149,15 +148,11 @@ const applyTheme = (payload: PreviewPayload) => {
     if (payload.clipboardItemFontSize) {
         root.style.setProperty("--clipboard-item-font-size", `${payload.clipboardItemFontSize}px`);
     }
-    if (payload.clipboardTagFontSize) {
-        root.style.setProperty("--clipboard-tag-font-size", `${payload.clipboardTagFontSize}px`);
-    }
 
     compactPreviewLog("theme applied", {
         theme,
         colorMode,
-        itemFontSize: payload.clipboardItemFontSize,
-        tagFontSize: payload.clipboardTagFontSize
+        itemFontSize: payload.clipboardItemFontSize
     });
 };
 

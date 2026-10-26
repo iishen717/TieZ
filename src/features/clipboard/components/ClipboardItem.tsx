@@ -9,14 +9,12 @@ import {
     Eye,
     EyeOff,
     ExternalLink,
-    Tag,
     X,
     FileText,
     Image as ImageIcon,
     Link as LinkIcon,
     Code,
     File,
-    Plus,
     Video,
     Sparkles,
     Loader2,
@@ -31,7 +29,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { ClipboardItemProps } from "../types";
-import { formatSensitivePreview, getConciseTime, getTagColor, getTagTextColor } from "../../../shared/lib/utils";
+import { formatSensitivePreview, getConciseTime } from "../../../shared/lib/utils";
 import HtmlContent from "../../../shared/components/HtmlContent";
 import { toTauriLocalImageSrc } from "../../../shared/lib/localImageSrc";
 import { getRichTextSnapshotDataUrl } from "../../../shared/lib/richTextSnapshot";
@@ -640,8 +638,6 @@ const ClipboardItem = ({
     windowPinned,
     isSensitiveHidden,
     isRevealed,
-    isEditingTags,
-    tagInput,
     theme,
     language,
     t,
@@ -653,16 +649,11 @@ const ClipboardItem = ({
     onOpen,
     onTogglePin,
     onDelete,
-    onToggleTagEditor,
-    onTagInput,
-    onTagAdd,
-    onTagDelete,
     onAIAction,
     onInputSubmit,
     aiEnabled,
     aiOptionsOpen,
     onAIOptionsToggle,
-    tagColors,
     richTextSnapshotPreview = false,
     showSourceAppIcon = true,
     sensitiveMaskPrefixVisible = 3,
@@ -674,8 +665,6 @@ const ClipboardItem = ({
     className,
     disableLayout
 }: ClipboardItemProps & { compactMode?: boolean, className?: string }) => {
-    const tagInputRef = useRef<HTMLInputElement>(null);
-    const [localTagInput, setLocalTagInput] = useState(tagInput);
     const [localAiOptionsOpen, setLocalAiOptionsOpen] = useState(!!aiOptionsOpen);
     const [snapshotFailed, setSnapshotFailed] = useState(false);
     const [richImageFallbackFailed, setRichImageFallbackFailed] = useState(false);
@@ -686,7 +675,6 @@ const ClipboardItem = ({
     );
     const singleFilePath = filePaths.length === 1 ? filePaths[0] : null;
     const [fileIcon, setFileIcon] = useState<string | null>(() => peekFileIcon(singleFilePath) ?? null);
-    const isComposing = useRef(false);
     const richSnapshotImgRef = useRef<HTMLImageElement | null>(null);
     const richSnapshotFallbackTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const hoverTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -767,9 +755,6 @@ const ClipboardItem = ({
             : (effectiveRichTextSnapshotSrc || null);
     const useSnapshotPreviewImage = !!richTextPreviewSrc && richTextPreviewSrc === effectiveRichTextSnapshotSrc;
     const useRichImageFallback = !!richTextPreviewSrc && richTextPreviewSrc === effectiveRichImageFallbackSrc;
-    const visibleTagCount = item.tags?.length || 0;
-    const hasTagsSection = visibleTagCount > 0 || isEditingTags;
-    const overlayTagsInPreview = !compactMode && !isEditingTags && visibleTagCount > 0;
     const quickPasteTitle = quickPasteHint
         ? `${t('quick_paste_modifier')}: ${quickPasteHint.combo}`
         : undefined;
@@ -866,14 +851,8 @@ const ClipboardItem = ({
             const clipboardItemFontSizeRaw = parseInt(
                 rootStyle.getPropertyValue("--clipboard-item-font-size")
             );
-            const clipboardTagFontSizeRaw = parseInt(
-                rootStyle.getPropertyValue("--clipboard-tag-font-size")
-            );
             const clipboardItemFontSize = Number.isFinite(clipboardItemFontSizeRaw)
                 ? clipboardItemFontSizeRaw
-                : undefined;
-            const clipboardTagFontSize = Number.isFinite(clipboardTagFontSizeRaw)
-                ? clipboardTagFontSizeRaw
                 : undefined;
             const colorMode = document.documentElement.classList.contains("dark-mode") ? "dark" : "light";
 
@@ -895,8 +874,7 @@ const ClipboardItem = ({
                 theme,
                 colorMode,
                 richTextSnapshotPreview,
-                clipboardItemFontSize,
-                clipboardTagFontSize
+                clipboardItemFontSize
             });
             compactPreviewLog("emit compact-preview-update done");
             if (compactPreviewPendingTimer) {
@@ -968,11 +946,6 @@ const ClipboardItem = ({
         }
     };
 
-    // Sync local state when prop changes (e.g. when editor opens)
-    useEffect(() => {
-        setLocalTagInput(tagInput);
-    }, [tagInput]);
-
     useEffect(() => {
         setLocalAiOptionsOpen(!!aiOptionsOpen);
     }, [aiOptionsOpen]);
@@ -1017,12 +990,6 @@ const ClipboardItem = ({
         open: { opacity: 1, height: "auto", marginTop: 8, marginBottom: 8 },
         collapsed: { opacity: 0, height: 0, marginTop: 0, marginBottom: 0 }
     };
-    useEffect(() => {
-        if (isEditingTags && tagInputRef.current) {
-            tagInputRef.current.focus();
-        }
-    }, [isEditingTags]);
-
     useEffect(() => {
         if (!canShowCompactPreview) {
             hideCompactPreview();
@@ -1091,110 +1058,6 @@ const ClipboardItem = ({
             </div>
         );
     };
-
-    const renderTagsContainer = (overlay = false) => (
-        <div
-            className={`item-tags-container${overlay ? ' overlay' : ''}`}
-            style={{
-                marginTop: overlay ? '0' : '2px',
-                display: 'flex',
-                flexWrap: 'wrap',
-                justifyContent: 'flex-end',
-                gap: '4px',
-                paddingTop: '0'
-            }}>
-            {item.tags?.map(tag => {
-                const tagBackground = tagColors?.[tag] || getTagColor(tag, theme);
-                const tagTextColor = getTagTextColor(tagBackground);
-                return (
-                    <span
-                        key={tag}
-                        className="tag-chip"
-                        style={{
-                            background: tagBackground,
-                            color: tagTextColor,
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '4px'
-                        }}
-                    >
-                        {tag}
-                        {isEditingTags && (
-                            <button
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    onTagDelete(tag);
-                                }}
-                                style={{ background: 'none', border: 'none', padding: 0, color: 'inherit', opacity: 0.72, cursor: 'pointer', display: 'flex' }}
-                            >
-                                <X size={8} />
-                            </button>
-                        )}
-                    </span>
-                );
-            })}
-
-            {isEditingTags && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <input
-                        ref={tagInputRef}
-                        type="text"
-                        value={localTagInput}
-                        onCompositionStart={() => {
-                            isComposing.current = true;
-                        }}
-                        onCompositionEnd={(e) => {
-                            isComposing.current = false;
-                            const val = (e.target as HTMLInputElement).value;
-                            setLocalTagInput(val);
-                            onTagInput(val);
-                        }}
-                        onMouseDown={() => {
-                            invoke('activate_window_focus').catch(console.error);
-                        }}
-                        onFocus={() => {
-                            invoke('activate_window_focus').catch(console.error);
-                        }}
-                        onChange={(e) => {
-                            const val = e.target.value;
-                            setLocalTagInput(val);
-                            if (!isComposing.current) {
-                                onTagInput(val);
-                            }
-                        }}
-                        onKeyDown={(e) => {
-                            if (e.key === 'Enter' && !isComposing.current) {
-                                onTagAdd();
-                            }
-                        }}
-                        className="tag-input"
-                        placeholder="New tag..."
-                        style={{
-                            background: 'var(--bg-input)',
-                            border: 'none',
-                            borderRadius: '0',
-                            padding: '2px 4px',
-                            fontSize: '10px',
-                            color: 'var(--text-primary)',
-                            width: '60px',
-                            outline: 'none'
-                        }}
-                        onClick={e => e.stopPropagation()}
-                    />
-                    <button
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            onTagAdd();
-                        }}
-                        className="btn-icon"
-                        style={{ padding: '2px', height: '16px', width: '16px' }}
-                    >
-                        <Plus size={10} />
-                    </button>
-                </div>
-            )}
-        </div>
-    );
 
     return (
         <motion.div
@@ -1339,13 +1202,6 @@ const ClipboardItem = ({
                         >
                             {item.is_pinned ? <PinOff size={12} /> : <Pin size={12} />}
                         </button>
-                        <button
-                            className={`btn-icon ${item.tags && item.tags.length > 0 ? "active" : ""}`}
-                            onClick={onToggleTagEditor}
-                            title="Tags"
-                        >
-                            <Tag size={12} />
-                        </button>
                         {(item.content_type === 'text' || item.content_type === 'rich_text' || item.content_type === 'code' || item.content_type === 'url' || item.content_type === 'markdown') && aiEnabled && (
                             <button
                                 className={`btn-icon ai-btn ${isAIProcessing || showAIOptions ? 'active' : ''}`}
@@ -1385,7 +1241,7 @@ const ClipboardItem = ({
                     <Pin size={10} fill="currentColor" />
                 </div>
             )}
-            <div className={`content-preview-shell${overlayTagsInPreview ? ' has-overlay-tags' : ''}`}>
+            <div className="content-preview-shell">
                 <div
                     className={`content-preview ${item.content_type === 'rich_text' ? 'rich-text' : ''} ${item.content_type === 'file' ? 'file-preview' : ''} ${isSensitiveHidden ? 'sensitive-blur' : ''}`}
                 >
@@ -1564,7 +1420,6 @@ const ClipboardItem = ({
                         )
                         : item.preview
                 )}
-                {overlayTagsInPreview && renderTagsContainer(true)}
             </div>
             </div>
 
@@ -1644,7 +1499,6 @@ const ClipboardItem = ({
                 )}
             </AnimatePresence>
 
-            {!overlayTagsInPreview && hasTagsSection && renderTagsContainer()}
         </motion.div>
     );
 };
@@ -1665,7 +1519,6 @@ export default memo(ClipboardItem, (prevProps, nextProps) => {
         prevProps.item.tags === nextProps.item.tags &&
         prevProps.quickPasteHint?.combo === nextProps.quickPasteHint?.combo &&
         prevProps.isRevealed === nextProps.isRevealed &&
-        prevProps.isEditingTags === nextProps.isEditingTags &&
         prevProps.isAIProcessing === nextProps.isAIProcessing &&
         prevProps.aiOptionsOpen === nextProps.aiOptionsOpen &&
         prevProps.aiEnabled === nextProps.aiEnabled &&
@@ -1673,8 +1526,7 @@ export default memo(ClipboardItem, (prevProps, nextProps) => {
         prevProps.showSourceAppIcon === nextProps.showSourceAppIcon &&
         prevProps.compactMode === nextProps.compactMode &&
         prevProps.theme === nextProps.theme &&
-        prevProps.language === nextProps.language &&
-        prevProps.tagInput === nextProps.tagInput;
+        prevProps.language === nextProps.language;
 });
 
 

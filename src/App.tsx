@@ -18,7 +18,6 @@ import { useSettingsApply } from "./shared/hooks/useSettingsApply";
 import { useSettingsInit } from "./shared/hooks/useSettingsInit";
 import { useSettingsPostInit } from "./shared/hooks/useSettingsPostInit";
 import { useSettingsSync } from "./shared/hooks/useSettingsSync";
-import { useTagColors } from "./shared/hooks/useTagColors";
 import { useClipboardEvents } from "./shared/hooks/useClipboardEvents";
 import { useClipboardActions } from "./shared/hooks/useClipboardActions";
 import { useMqttListener } from "./shared/hooks/useMqttListener";
@@ -31,7 +30,6 @@ import { useAppActions } from "./shared/hooks/useAppActions";
 import { useNavigationSync } from "./shared/hooks/useNavigationSync";
 import { useContextMenuBlock } from "./shared/hooks/useContextMenuBlock";
 import { useSettingsPanelReset } from "./shared/hooks/useSettingsPanelReset";
-import { useTagManagerRefresh } from "./shared/hooks/useTagManagerRefresh";
 import { useAiActions } from "./shared/hooks/useAiActions";
 import { matchesHotkey } from "./shared/hooks/useHotkeyMatching";
 import { usePinnedSort } from "./shared/hooks/usePinnedSort";
@@ -113,7 +111,7 @@ const buildQuickPasteHintsById = (
 };
 
 const App = () => {
-  type FileTransferSourceView = "clipboard" | "settings" | "tag_manager" | "emoji_panel";
+  type FileTransferSourceView = "clipboard" | "settings" | "memo_manager" | "emoji_panel";
 
   const appState = useAppState();
   const {
@@ -121,10 +119,10 @@ const App = () => {
     setShowSettings,
     settingsSubpage,
     setSettingsSubpage,
-    showTagManager,
-    setShowTagManager,
-    tagManagerEnabled,
-    setTagManagerEnabled,
+    showMemoManager,
+    setShowMemoManager,
+    memoManagerEnabled,
+    setMemoManagerEnabled,
     setCollapsedGroups,
     history,
     setHistory,
@@ -132,20 +130,13 @@ const App = () => {
     setSearch,
     isComposing,
     setIsComposing,
-    searchIsFocused,
     setSearchIsFocused,
-    showTagFilter,
-    setShowTagFilter,
-    tagInput,
-    setTagInput,
     showEmojiPanel,
     setShowEmojiPanel,
     emojiFavorites,
     setEmojiFavorites,
     aiOptionsOpenId,
     setAiOptionsOpenId,
-    editingTagsId,
-    setEditingTagsId,
     revealedIds,
     setRevealedIds,
     setAutoStart,
@@ -219,8 +210,6 @@ const App = () => {
     setCompactMode,
     clipboardItemFontSize,
     setClipboardItemFontSize,
-    clipboardTagFontSize,
-    setClipboardTagFontSize,
     emojiPanelEnabled,
     setEmojiPanelEnabled,
     emojiPanelTab,
@@ -319,13 +308,12 @@ const App = () => {
   } = appState;
 
   const effectiveShowEmojiPanel = showEmojiPanel && emojiPanelEnabled;
-  const effectiveShowTagManager = showTagManager && tagManagerEnabled;
+  const effectiveShowMemoManager = showMemoManager && memoManagerEnabled;
   const [fileTransferSourceView, setFileTransferSourceView] =
     useState<FileTransferSourceView>("clipboard");
 
   const debouncedSearch = useDebounce(search, 400);
   const searchInputRef = useInputFocus<HTMLInputElement>();
-  const tagColors = useTagColors();
   const virtualListRef = useRef<VirtualClipboardListHandle | null>(null);
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [quickPasteVersion, setQuickPasteVersion] = useState(0);
@@ -359,7 +347,7 @@ const App = () => {
     setShowSearchBox,
     search,
     showSettings,
-    showTagManager: effectiveShowTagManager,
+    showMemoManager: effectiveShowMemoManager,
     appSettings
   });
 
@@ -378,29 +366,29 @@ const App = () => {
   );
 
   const getCurrentSourceView = useCallback((): FileTransferSourceView => {
-    if (effectiveShowTagManager) return "tag_manager";
+    if (effectiveShowMemoManager) return "memo_manager";
     if (effectiveShowEmojiPanel) return "emoji_panel";
     if (showSettings) return "settings";
     return "clipboard";
-  }, [effectiveShowEmojiPanel, effectiveShowTagManager, showSettings]);
+  }, [effectiveShowEmojiPanel, effectiveShowMemoManager, showSettings]);
 
   const restoreViewAfterChat = useCallback(
     (sourceView: FileTransferSourceView) => {
-      setShowTagManager(sourceView === "tag_manager");
+      setShowMemoManager(sourceView === "memo_manager");
       setShowEmojiPanel(sourceView === "emoji_panel");
       setShowSettings(sourceView === "settings");
     },
-    [setShowEmojiPanel, setShowSettings, setShowTagManager]
+    [setShowEmojiPanel, setShowSettings, setShowMemoManager]
   );
 
   const openFileTransfer = useCallback(() => {
     const sourceView = getCurrentSourceView();
     setFileTransferSourceView(sourceView);
-    setShowTagManager(false);
+    setShowMemoManager(false);
     setShowEmojiPanel(false);
     setShowSettings(true);
     setChatMode(true);
-  }, [getCurrentSourceView, setChatMode, setShowEmojiPanel, setShowSettings, setShowTagManager]);
+  }, [getCurrentSourceView, setChatMode, setShowEmojiPanel, setShowSettings, setShowMemoManager]);
 
   const closeFileTransfer = useCallback(() => {
     setChatMode(false);
@@ -416,8 +404,8 @@ const App = () => {
       setShowEmojiPanel(false);
       return;
     }
-    if (effectiveShowTagManager) {
-      setShowTagManager(false);
+    if (effectiveShowMemoManager) {
+      setShowMemoManager(false);
       return;
     }
     if (showSettings) {
@@ -431,11 +419,11 @@ const App = () => {
     chatMode,
     closeFileTransfer,
     effectiveShowEmojiPanel,
-    effectiveShowTagManager,
+    effectiveShowMemoManager,
     setShowEmojiPanel,
     setShowSettings,
     setSettingsSubpage,
-    setShowTagManager,
+    setShowMemoManager,
     settingsSubpage,
     showSettings
   ]);
@@ -472,18 +460,6 @@ const App = () => {
     () => (hotkey || t('not_set')).split('+'),
     [hotkey, t]
   );
-
-  // Compute all tags when tag manager is open OR when search box is focused
-  const allTags = useMemo(() => {
-    if (!effectiveShowTagManager && !showTagFilter) return [];
-
-    const set = new Set<string>();
-    // Scan history for all unique tags  
-    history.forEach(item => {
-      (item.tags || []).forEach(tag => set.add(tag));
-    });
-    return Array.from(set).sort((a, b) => a.localeCompare(b));
-  }, [history, effectiveShowTagManager, showTagFilter]);
 
   useEffect(() => {
     const handleKeydown = (event: KeyboardEvent) => {
@@ -526,8 +502,6 @@ const App = () => {
 
   const { announcements, dismissAnnouncement } = useAnnouncements();
 
-  const tagManagerSizeRef = useRef<{ width: number; height: number } | null>(null);
-
   const settings = useSettingsInit({
     setAppSettings,
     setHotkey,
@@ -539,14 +513,12 @@ const App = () => {
 
   useSettingsPostInit({
     settings,
-    tagManagerSizeRef,
     setCustomBackground,
     setCustomBackgroundOpacity,
     setSurfaceOpacity,
     setClipboardItemFontSize,
-    setClipboardTagFontSize,
     setEmojiPanelEnabled,
-    setTagManagerEnabled,
+    setMemoManagerEnabled,
     setEmojiPanelTab,
     setEmojiFavorites,
     setPersistent,
@@ -623,7 +595,7 @@ const App = () => {
   useEffect(() => {
     const unlisten = listen("focus-search-input", () => {
       setShowSettings(false);
-      setShowTagManager(false);
+      setShowMemoManager(false);
       setChatMode(false);
       setShowEmojiPanel(false);
       setShowSearchBox(true);
@@ -638,7 +610,7 @@ const App = () => {
     };
   }, [
     setShowSettings,
-    setShowTagManager,
+    setShowMemoManager,
     setChatMode,
     setShowEmojiPanel,
     setShowSearchBox,
@@ -653,10 +625,10 @@ const App = () => {
   }, [emojiPanelEnabled, showEmojiPanel, setShowEmojiPanel]);
 
   useEffect(() => {
-    if (!tagManagerEnabled && showTagManager) {
-      setShowTagManager(false);
+    if (!memoManagerEnabled && showMemoManager) {
+      setShowMemoManager(false);
     }
-  }, [tagManagerEnabled, showTagManager, setShowTagManager]);
+  }, [memoManagerEnabled, showMemoManager, setShowMemoManager]);
 
   useEffect(() => {
     if (quickPasteModifier === "disabled") {
@@ -711,7 +683,6 @@ const App = () => {
     compactMode,
     settingsLoaded,
     clipboardItemFontSize,
-    clipboardTagFontSize,
     surfaceOpacity
   });
 
@@ -744,14 +715,6 @@ const App = () => {
   useToastListener({ pushToast });
 
   useSettingsPanelReset({ showSettings, setCollapsedGroups, setSettingsSubpage });
-
-  useTagManagerRefresh({
-    showTagManager: effectiveShowTagManager,
-    settingsLoaded,
-    persistentLimitEnabled,
-    persistentLimit,
-    fetchHistory
-  });
 
   const saveAppSetting = useCallback(async (type: string, path: string) => {
     const key = `app.${type}`;
@@ -830,9 +793,9 @@ const App = () => {
       pushToast
     });
 
-  useNavigationSync({ showSettings, showTagManager: effectiveShowTagManager, chatMode, showEmojiPanel: effectiveShowEmojiPanel });
+  useNavigationSync({ showSettings, showMemoManager: effectiveShowMemoManager, chatMode, showEmojiPanel: effectiveShowEmojiPanel });
 
-  const { copyToClipboard, openContent, deleteEntry, togglePin, handleUpdateTags } =
+  const { copyToClipboard, openContent, deleteEntry, togglePin } =
     useClipboardActions({
       t,
       pushToast,
@@ -907,9 +870,8 @@ const App = () => {
     isKeyboardMode,
     setIsKeyboardMode,
     showSettings,
-    showTagManager: effectiveShowTagManager,
+    showMemoManager: effectiveShowMemoManager,
     chatMode,
-    editingTagsId,
     arrowKeySelection,
     richPasteHotkey,
     searchInputRef,
@@ -924,9 +886,6 @@ const App = () => {
     isKeyboardMode,
     selectedIndex,
     isWindowPinned,
-    editingTagsId,
-    tagInput,
-    tagColors,
     theme,
     language,
     t,
@@ -947,9 +906,6 @@ const App = () => {
     openContent,
     togglePin,
     deleteEntry,
-    setEditingTagsId,
-    setTagInput,
-    handleUpdateTags,
     handleAIAction
   });
 
@@ -983,9 +939,9 @@ const App = () => {
         t={t}
         showSettings={showSettings}
         setShowSettings={setShowSettings}
-        showTagManager={effectiveShowTagManager}
-        setShowTagManager={setShowTagManager}
-        tagManagerEnabled={tagManagerEnabled}
+        showMemoManager={effectiveShowMemoManager}
+        setShowMemoManager={setShowMemoManager}
+        memoManagerEnabled={memoManagerEnabled}
         showEmojiPanel={effectiveShowEmojiPanel}
         setShowEmojiPanel={setShowEmojiPanel}
         emojiPanelEnabled={emojiPanelEnabled}
@@ -1000,13 +956,7 @@ const App = () => {
         setSearch={setSearch}
         setIsComposing={setIsComposing}
         searchInputRef={searchInputRef}
-        showTagFilter={showTagFilter}
-        setShowTagFilter={setShowTagFilter}
-        allTags={allTags}
-        searchIsFocused={searchIsFocused}
         setSearchIsFocused={setSearchIsFocused}
-        setEditingTagsId={setEditingTagsId}
-        theme={theme}
         colorMode={colorMode}
         settingsTitle={showSettings && settingsSubpage === "advanced" ? t("advanced_settings") : t("settings")}
         typeFilter={typeFilter}
@@ -1022,15 +972,18 @@ const App = () => {
 
       <main
         className={`main-content ${showSettings && chatMode ? 'main-content-chat-mode' : ''}`}
-        style={{ overflowY: (showSettings || effectiveShowTagManager) ? 'auto' : 'hidden' }}
+        style={{
+          overflowY: (showSettings || effectiveShowMemoManager) ? 'auto' : 'hidden',
+          overflowX: 'hidden'
+        }}
         onWheel={handleMainWheel}
       >
         <AppMainContent
           t={t}
           theme={theme}
           showSettings={showSettings}
-          showTagManager={effectiveShowTagManager}
-          tagManagerEnabled={tagManagerEnabled}
+          showMemoManager={effectiveShowMemoManager}
+          memoManagerEnabled={memoManagerEnabled}
           showEmojiPanel={effectiveShowEmojiPanel}
           chatMode={chatMode}
           localIp={localIp}

@@ -6,7 +6,7 @@ type UseSearchScrollOptions = {
   setShowSearchBox: (val: boolean) => void;
   search: string;
   showSettings: boolean;
-  showTagManager: boolean;
+  showMemoManager: boolean;
   appSettings: Record<string, string>;
 };
 

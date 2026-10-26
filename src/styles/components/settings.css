@@ -10,8 +10,7 @@
   max-height: 100%;
 }
 
-.settings-view:has(.advanced-workbench),
-.settings-view:has(.themed-tag-manager) {
+.settings-view:has(.advanced-workbench) {
   max-width: 100% !important;
   height: 100% !important; 
   display: flex !important;

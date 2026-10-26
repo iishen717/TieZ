@@ -13,8 +13,6 @@ export interface ClipboardItemProps {
   windowPinned: boolean;
   isSensitiveHidden: boolean;
   isRevealed: boolean;
-  isEditingTags: boolean;
-  tagInput: string;
   theme: string;
   language: Locale;
   t: (key: string) => string;
@@ -22,7 +20,6 @@ export interface ClipboardItemProps {
   showSourceAppIcon?: boolean;
   isAIProcessing?: boolean;
   aiEnabled?: boolean;
-  tagColors?: Record<string, string>;
   aiOptionsOpen?: boolean;
   richTextSnapshotPreview?: boolean;
   sensitiveMaskPrefixVisible?: number;
@@ -35,10 +32,6 @@ export interface ClipboardItemProps {
   onOpen: (e: MouseEvent) => void;
   onTogglePin: (e: MouseEvent) => void;
   onDelete: (e: MouseEvent) => void;
-  onToggleTagEditor: (e: MouseEvent) => void;
-  onTagInput: (val: string) => void;
-  onTagAdd: () => void;
-  onTagDelete: (tag: string) => void;
   onAIAction?: (type: string) => void;
   onAIOptionsToggle?: () => void;
   onInputSubmit?: (val: string) => void;

@@ -35,8 +35,8 @@ interface GeneralSettingsGroupProps {
     setScrollTopButtonEnabled: (val: boolean) => void;
     emojiPanelEnabled: boolean;
     setEmojiPanelEnabled: (val: boolean) => void;
-    tagManagerEnabled: boolean;
-    setTagManagerEnabled: (val: boolean) => void;
+    memoManagerEnabled: boolean;
+    setMemoManagerEnabled: (val: boolean) => void;
     arrowKeySelection: boolean;
     setArrowKeySelection: (val: boolean) => void;
     saveAppSetting: (key: string, val: string) => void;
@@ -72,8 +72,8 @@ const GeneralSettingsGroup = ({
     setScrollTopButtonEnabled,
     emojiPanelEnabled,
     setEmojiPanelEnabled,
-    tagManagerEnabled,
-    setTagManagerEnabled,
+    memoManagerEnabled,
+    setMemoManagerEnabled,
     arrowKeySelection,
     setArrowKeySelection,
     saveAppSetting
@@ -305,18 +305,18 @@ const GeneralSettingsGroup = ({
                 </div>
                 <div className="setting-item">
                     <LabelWithHint
-                        label={t('tag_manager_enabled') || '标签管理页开关'}
-                        hint={t('tag_manager_enabled_hint') || '关闭后隐藏标签管理入口'}
-                        hintKey="tag_manager_enabled"
+                        label={t('memo_panel_enabled') || '备忘录页开关'}
+                        hint={t('memo_panel_enabled_hint') || '关闭后隐藏备忘录入口'}
+                        hintKey="memo_panel_enabled"
                     />
                     <label className="switch">
                         <input
                             className="cb"
                             type="checkbox"
-                            checked={tagManagerEnabled}
+                            checked={memoManagerEnabled}
                             onChange={(e) => {
                                 const enabled = e.target.checked;
-                                setTagManagerEnabled(enabled);
+                                setMemoManagerEnabled(enabled);
                                 saveAppSetting('tag_manager_enabled', String(enabled));
                             }}
                         />

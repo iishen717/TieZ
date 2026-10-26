@@ -39,8 +39,6 @@ interface SettingsPanelProps {
     colorMode: string;
     clipboardItemFontSize: number;
     setClipboardItemFontSize: (val: number) => void;
-    clipboardTagFontSize: number;
-    setClipboardTagFontSize: (val: number) => void;
 
     // State
     collapsedGroups: Record<string, boolean>;
@@ -91,8 +89,8 @@ interface SettingsPanelProps {
     setScrollTopButtonEnabled: (val: boolean) => void;
     emojiPanelEnabled: boolean;
     setEmojiPanelEnabled: (val: boolean) => void;
-    tagManagerEnabled: boolean;
-    setTagManagerEnabled: (val: boolean) => void;
+    memoManagerEnabled: boolean;
+    setMemoManagerEnabled: (val: boolean) => void;
     arrowKeySelection: boolean;
     setArrowKeySelection: (val: boolean) => void;
 
@@ -285,8 +283,8 @@ const SettingsPanel = (props: SettingsPanelProps) => {
         setPrivacyProtection,
         setIsRecording, isRecording, hotkey, hotkeyParts, updateHotkey,
         setTheme, setColorMode, setLanguage, showAppBorder, setShowAppBorder, showSourceAppIcon, setShowSourceAppIcon, compactMode, setCompactMode, checkHotkeyConflict,
-        clipboardItemFontSize, setClipboardItemFontSize, clipboardTagFontSize, setClipboardTagFontSize,
-        emojiPanelEnabled, setEmojiPanelEnabled, tagManagerEnabled, setTagManagerEnabled,
+        clipboardItemFontSize, setClipboardItemFontSize,
+        emojiPanelEnabled, setEmojiPanelEnabled, memoManagerEnabled, setMemoManagerEnabled,
         setMqttEnabled, saveMqtt, setMqttServer, setMqttPort, setMqttUser, setMqttPass, setMqttTopic, setMqttProtocol, setMqttWsPath, setMqttNotificationEnabled,
         setCloudSyncEnabled, setCloudSyncAuto, setCloudSyncIntervalSec, setCloudSyncSnapshotIntervalMin, setCloudSyncWebdavUrl, setCloudSyncWebdavUsername, setCloudSyncWebdavPassword, setCloudSyncWebdavBasePath, saveCloudSync,
         setFileServerEnabled, setFileServerPort, setFileTransferAutoOpen, setShowAutoCloseHint, setFileServerAutoClose, setFileTransferAutoCopy, fetchEffectiveTransferPath,
@@ -535,8 +533,8 @@ const SettingsPanel = (props: SettingsPanelProps) => {
                 setScrollTopButtonEnabled={setScrollTopButtonEnabled}
                 emojiPanelEnabled={emojiPanelEnabled}
                 setEmojiPanelEnabled={setEmojiPanelEnabled}
-                tagManagerEnabled={tagManagerEnabled}
-                setTagManagerEnabled={setTagManagerEnabled}
+                memoManagerEnabled={memoManagerEnabled}
+                setMemoManagerEnabled={setMemoManagerEnabled}
                 arrowKeySelection={arrowKeySelection}
                 setArrowKeySelection={setArrowKeySelection}
                 saveAppSetting={saveAppSetting}
@@ -634,8 +632,6 @@ const SettingsPanel = (props: SettingsPanelProps) => {
                 setCompactMode={setCompactMode}
                 clipboardItemFontSize={clipboardItemFontSize}
                 setClipboardItemFontSize={setClipboardItemFontSize}
-                clipboardTagFontSize={clipboardTagFontSize}
-                setClipboardTagFontSize={setClipboardTagFontSize}
                 customBackground={customBackground}
                 setCustomBackground={setCustomBackground}
                 customBackgroundOpacity={customBackgroundOpacity}

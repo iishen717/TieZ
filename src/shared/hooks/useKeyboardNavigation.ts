@@ -14,9 +14,8 @@ interface UseKeyboardNavigationOptions {
   isKeyboardMode: boolean;
   setIsKeyboardMode: (val: boolean | ((prev: boolean) => boolean)) => void;
   showSettings: boolean;
-  showTagManager: boolean;
+  showMemoManager: boolean;
   chatMode: boolean;
-  editingTagsId: number | null;
   arrowKeySelection: boolean;
   richPasteHotkey: string;
   searchInputRef: RefObject<HTMLInputElement | null>;
@@ -31,9 +30,8 @@ export const useKeyboardNavigation = ({
   isKeyboardMode,
   setIsKeyboardMode,
   showSettings,
-  showTagManager,
+  showMemoManager,
   chatMode,
-  editingTagsId,
   arrowKeySelection,
   richPasteHotkey,
   searchInputRef,
@@ -45,9 +43,8 @@ export const useKeyboardNavigation = ({
   const isKeyboardModeRef = useRef(isKeyboardMode);
   const isWindowVisibleRef = useWindowVisibility();
   const showSettingsRef = useRef(showSettings);
-  const showTagManagerRef = useRef(showTagManager);
+  const showMemoManagerRef = useRef(showMemoManager);
   const chatModeRef = useRef(chatMode);
-  const editingTagsIdRef = useRef(editingTagsId);
   const arrowKeySelectionRef = useRef(arrowKeySelection);
   const copyToClipboardRef = useRef(copyToClipboard);
   const richPasteHotkeyRef = useRef(richPasteHotkey);
@@ -56,9 +53,8 @@ export const useKeyboardNavigation = ({
   useEffect(() => { selectedIndexRef.current = selectedIndex; }, [selectedIndex]);
   useEffect(() => { isKeyboardModeRef.current = isKeyboardMode; }, [isKeyboardMode]);
   useEffect(() => { showSettingsRef.current = showSettings; }, [showSettings]);
-  useEffect(() => { showTagManagerRef.current = showTagManager; }, [showTagManager]);
+  useEffect(() => { showMemoManagerRef.current = showMemoManager; }, [showMemoManager]);
   useEffect(() => { chatModeRef.current = chatMode; }, [chatMode]);
-  useEffect(() => { editingTagsIdRef.current = editingTagsId; }, [editingTagsId]);
   useEffect(() => { arrowKeySelectionRef.current = arrowKeySelection; }, [arrowKeySelection]);
   useEffect(() => { copyToClipboardRef.current = copyToClipboard; }, [copyToClipboard]);
   useEffect(() => { richPasteHotkeyRef.current = richPasteHotkey; }, [richPasteHotkey]);
@@ -79,9 +75,8 @@ export const useKeyboardNavigation = ({
 
       if (
         showSettingsRef.current ||
-        showTagManagerRef.current ||
-        chatModeRef.current ||
-        editingTagsIdRef.current !== null
+        showMemoManagerRef.current ||
+        chatModeRef.current
       ) {
         return;
       }
@@ -193,7 +188,7 @@ export const useKeyboardNavigation = ({
         console.warn("Failed to check window visibility:", err);
       }
 
-      if (showSettings || showTagManager || chatMode || editingTagsId !== null) return;
+      if (showSettings || showMemoManager || chatMode) return;
 
       const action = event.payload;
       const history = filteredHistoryRef.current;
@@ -235,12 +230,11 @@ export const useKeyboardNavigation = ({
     arrowKeySelection,
     chatMode,
     copyToClipboard,
-    editingTagsId,
     setIsKeyboardMode,
     setSearch,
     setSelectedIndex,
     showSettings,
-    showTagManager
+    showMemoManager
   ]);
 };
 

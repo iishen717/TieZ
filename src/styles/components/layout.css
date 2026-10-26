@@ -156,6 +156,7 @@ select.search-input option {
 
 .main-content {
   flex: 1;
+  overflow-x: hidden;
   overflow-y: hidden;
   padding: 6px 0 12px 0;
   display: flex;

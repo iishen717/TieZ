@@ -198,6 +198,24 @@ pub fn run_migrations(conn: &Connection) -> Result<()> {
         conn.execute("INSERT INTO schema_migrations (version) VALUES (9)", [])?;
     }
 
+    // Migration 10: Memo panel storage
+    if current_version < 10 {
+        conn.execute_batch(
+            "
+            CREATE TABLE IF NOT EXISTS memos (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                title TEXT NOT NULL DEFAULT '',
+                content TEXT NOT NULL DEFAULT '',
+                created_at INTEGER NOT NULL,
+                updated_at INTEGER NOT NULL
+            );
+            CREATE INDEX IF NOT EXISTS idx_memos_updated_at
+                ON memos (updated_at DESC);
+            ",
+        )?;
+        conn.execute("INSERT INTO schema_migrations (version) VALUES (10)", [])?;
+    }
+
     Ok(())
 }
 

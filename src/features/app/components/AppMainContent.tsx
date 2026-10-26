@@ -5,7 +5,7 @@ import type { DragControls } from "framer-motion";
 import { ArrowUp, Clipboard } from "lucide-react";
 import FileTransferChatView from "../../file-transfer/components/FileTransferChatView";
 import SettingsPanel from "../../settings/components/SettingsPanel";
-import TagManager from "../../tag/components/TagManager";
+import MemoManager from "../../memo/components/MemoManager";
 import EmojiPanel from "../../emoji/components/EmojiPanel";
 import { VirtualClipboardList } from "../../clipboard/components/VirtualClipboardList";
 import type { ClipboardEntry } from "../../../shared/types";
@@ -23,8 +23,8 @@ interface AppMainContentProps {
   t: (key: string) => string;
   theme: string;
   showSettings: boolean;
-  showTagManager: boolean;
-  tagManagerEnabled: boolean;
+  showMemoManager: boolean;
+  memoManagerEnabled: boolean;
   showEmojiPanel: boolean;
   chatMode: boolean;
   localIp: string;
@@ -96,8 +96,8 @@ const AppMainContent = ({
   t,
   theme,
   showSettings,
-  showTagManager,
-  tagManagerEnabled,
+  showMemoManager,
+  memoManagerEnabled,
   showEmojiPanel,
   chatMode,
   localIp,
@@ -189,14 +189,14 @@ const AppMainContent = ({
     handlePinnedReorder(finalIds);
   }, [handlePinnedReorder, pinnedItems]);
 
-  if (showTagManager && tagManagerEnabled) {
+  if (showMemoManager && memoManagerEnabled) {
     return (
       <motion.div
-        initial={{ opacity: 0, x: 20 }}
-        animate={{ opacity: 1, x: 0 }}
+        initial={{ x: 20 }}
+        animate={{ x: 0 }}
         style={{ height: "100%" }}
       >
-        <TagManager t={t} theme={theme} />
+        <MemoManager t={t} theme={theme} />
       </motion.div>
     );
   }

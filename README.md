@@ -13,7 +13,7 @@
 
 ## 项目简介
 
-TieZ 是一款基于 Tauri 2 + React 构建的剪贴板管理工具，在本地记录剪贴板历史，支持文本、富文本、图片、文件和目录路径，并提供标签、搜索、隐私脱敏、云同步、局域网传输等效率功能。
+TieZ 是一款基于 Tauri 2 + React 构建的剪贴板管理工具，在本地记录剪贴板历史，支持文本、富文本、图片、文件和目录路径，并提供搜索、隐私脱敏、备忘录、云同步、局域网传输等效率功能。
 
 本仓库在上游开源版本的基础上，重点重新设计了主界面的样式体系：把布局结构与主题视觉解耦，内置 5 套主题，支持浅色/深色模式，并让主窗口与紧凑预览窗口始终保持同一主题。
 
@@ -21,10 +21,10 @@ TieZ 是一款基于 Tauri 2 + React 构建的剪贴板管理工具，在本地�
 
 ### 下载安装包
 
-前往 [Releases](https://github.com/iishen717/TieZ/releases) 下载最新安装包。当前版本为 **0.3.3**，文件名为：
+前往 [Releases](https://github.com/iishen717/TieZ/releases) 下载最新安装包。当前版本为 **0.3.4**，文件名为：
 
 ```
-TieZ_0.3.3_x64-setup.exe
+TieZ_0.3.4_x64-setup.exe
 ```
 
 双击运行安装程序，按向导完成安装即可。安装过程支持 English / 简体中文 / 繁體中文，默认安装到当前用户，无需管理员权限。
@@ -80,6 +80,7 @@ npm run build:portable
 - **5 套内置主题**：3D 复古、便利贴、云母、毛玻璃、纸质书感
 - **主题系统**：统一注册、自动加载，主题切换同步应用到主窗口和紧凑预览窗口
 - **样式分层**：`src/styles/base.css` + `src/styles/components/*` + `src/styles/themes/*`
+- **标签改造为备忘录**：顶部标签入口改为备忘录页面；剪贴板条目不显示标签图标和标签块，旧标签数据保留用于隐私检测
 - 其余业务功能沿用上游实现
 
 > 主题系统的设计思路、Token 约定和新增主题的方法见 [docs/THEME-SYSTEM.md](docs/THEME-SYSTEM.md)。
@@ -102,7 +103,7 @@ npm run build:portable
 ### 剪贴板管理
 
 - 自动记录文本、富文本（HTML）、图片、文件与目录路径
-- 支持置顶、多色标签分类、Emoji 表情管理和全局搜索
+- 支持置顶、Emoji 表情管理和全局搜索
 - 虚拟列表渲染，历史记录较多时保持流畅
 - 敏感信息预览自动脱敏（手机号、邮箱、身份证等）
 
@@ -111,6 +112,13 @@ npm run build:portable
 - 全局快捷键呼出，支持键盘导航和顺序粘贴模式
 - 外部编辑器打开内容，保存后自动写回记录
 - 可配置 AI 模型，对选中的剪贴板内容执行 AI 处理
+
+### 备忘录
+
+- 独立的多条备忘录，顶部下拉切换
+- 标题与正文自动保存，底部显示保存时间
+- 支持新建、清空正文、删除和导出 Markdown
+- 备忘录只在备忘录页面显示，不进入剪贴板列表与搜索
 
 ### 同步与传输
 
@@ -138,7 +146,7 @@ npm run build:portable
 ```
 TieZ/
 ├── src/                    # React 前端
-│   ├── features/           # 功能模块：app / clipboard / settings / tag / emoji / file-transfer
+│   ├── features/           # 功能模块：app / clipboard / settings / memo / emoji / file-transfer
 │   ├── shared/             # 公共组件、hooks、工具函数与类型
 │   ├── styles/             # base.css、components、themes
 │   └── locales.ts          # 中/英/繁三语文案
