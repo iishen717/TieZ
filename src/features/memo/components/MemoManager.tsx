@@ -105,6 +105,10 @@ const MemoManager = ({ t, theme }: MemoManagerProps) => {
         contentRef.current = content;
     }, [content]);
 
+    const requestWindowFocus = useCallback(() => {
+        invoke("activate_window_focus").catch(console.error);
+    }, []);
+
     const showStatus = useCallback((text: string) => {
         setStatusText(text);
         if (statusTimerRef.current) {
@@ -301,6 +305,7 @@ const MemoManager = ({ t, theme }: MemoManagerProps) => {
                 ...prev
             ]);
             await loadMemo(created.id);
+            requestWindowFocus();
             requestAnimationFrame(() => titleInputRef.current?.focus());
         } catch (error) {
             console.error("Failed to create memo:", error);
@@ -392,13 +397,14 @@ const MemoManager = ({ t, theme }: MemoManagerProps) => {
     }
 
     return (
-        <div className={`memo-manager theme-${theme}`}>
+        <div className={`memo-manager theme-${theme}`} onMouseDown={requestWindowFocus}>
             <div className="memo-panel">
                 <div className="memo-select-wrap">
                     <select
                         className="memo-select"
                         value={currentId ?? ""}
                         onChange={(event) => void handleSelect(event)}
+                        onFocus={requestWindowFocus}
                         disabled={isBootstrapping || memos.length === 0}
                         aria-label={t("memo_manager") || "备忘录"}
                     >
@@ -418,6 +424,7 @@ const MemoManager = ({ t, theme }: MemoManagerProps) => {
                     value={title}
                     placeholder={t("memo_title_placeholder") || "备忘录标题"}
                     disabled={isBootstrapping || currentId == null}
+                    onFocus={requestWindowFocus}
                     onChange={(event) => setTitle(event.target.value)}
                 />
 
@@ -427,6 +434,7 @@ const MemoManager = ({ t, theme }: MemoManagerProps) => {
                     value={content}
                     placeholder={t("memo_content_placeholder") || "写点什么..."}
                     disabled={isBootstrapping || currentId == null}
+                    onFocus={requestWindowFocus}
                     onChange={(event) => setContent(event.target.value)}
                 />
 
